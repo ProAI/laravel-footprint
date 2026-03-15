@@ -1,0 +1,75 @@
+{
+    "name": "proai/laravel-footprint",
+    "description": "User session tracking and device management for Laravel.",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "authentication",
+        "auth",
+        "session",
+        "tracker",
+        "tracking"
+    ],
+    "homepage": "http://github.com/proai/laravel-footprint",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Markus J. Wetzel",
+            "email": "markuswetzel@gmx.net"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/auth": "^11.0||^12.0",
+        "illuminate/contracts": "^11.0||^12.0",
+        "illuminate/database": "^11.0||^12.0",
+        "illuminate/support": "^11.0||^12.0",
+        "symfony/http-foundation": "^6.0||^7.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0",
+        "pestphp/pest": "^2.0|^3.0",
+        "laravel/pint": "^1.27",
+        "larastan/larastan": "^3.9",
+        "pestphp/pest-plugin-type-coverage": "^3.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "ProAI\\Footprint\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ProAI\\Footprint\\Tests\\": "tests/",
+            "ProAI\\Footprint\\Tests\\Fixtures\\": "tests/Fixtures/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ProAI\\Footprint\\FootprintServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "lint": "pint",
+        "test:lint": "pint --test",
+        "test:types": "phpstan analyse",
+        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:unit": "pest",
+        "test": [
+            "@test:lint",
+            "@test:types",
+            "@test:type-coverage",
+            "@test:unit"
+        ]
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

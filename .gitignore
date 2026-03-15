@@ -1,0 +1,6 @@
+/vendor
+composer.lock
+/.claude
+/phpunit.xml
+/.phpunit.result.cache
+/.phpunit.cache

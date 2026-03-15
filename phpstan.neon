@@ -1,0 +1,12 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - src/
+
+    level: 8
+
+    ignoreErrors:
+        - '#Trait ProAI\\Footprint\\HasSessions is used zero times#'
+        - '#Access to an undefined property ProAI\\Footprint\\Contracts\\Sessionable::\$#'

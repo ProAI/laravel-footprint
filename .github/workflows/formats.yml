@@ -1,0 +1,69 @@
+name: Formats
+
+on:
+  push:
+    paths:
+      - "**.php"
+  pull_request:
+    paths:
+      - "**.php"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    name: Lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-php-8.4-composer-${{ hashFiles('composer.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, curl, libxml, mbstring, zip
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Coding Style Checks
+        run: composer test:lint
+
+  static-analysis:
+    runs-on: ubuntu-latest
+
+    name: Static Analysis
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-php-8.4-composer-${{ hashFiles('composer.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, curl, libxml, mbstring, zip
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Type Checks
+        run: composer test:types
+
+      - name: Type Coverage
+        run: composer test:type-coverage
