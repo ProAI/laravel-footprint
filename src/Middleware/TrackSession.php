@@ -49,16 +49,20 @@ class TrackSession
             return $response;
         }
 
-        /** @var int $refreshInterval */
+        /** @var int|null $refreshInterval */
         $refreshInterval = config('footprint.refresh_interval', 5);
 
-        $threshold = now()->subMinutes($refreshInterval);
-
-        /** @var \Illuminate\Support\Carbon $lastUsedAt */
-        $lastUsedAt = $session->last_used_at;
-
-        if ($lastUsedAt->lt($threshold)) {
+        if (is_null($refreshInterval)) {
             $this->repository->updateActivity($session);
+        } else {
+            $threshold = now()->subMinutes($refreshInterval);
+
+            /** @var \Illuminate\Support\Carbon $lastUsedAt */
+            $lastUsedAt = $session->last_used_at;
+
+            if ($lastUsedAt->lt($threshold)) {
+                $this->repository->updateActivity($session);
+            }
         }
 
         return $response;

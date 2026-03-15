@@ -51,6 +51,27 @@ it('does not update activity within refresh interval', function () {
     expect($session->last_used_at->eq($originalTime))->toBeTrue();
 });
 
+it('always updates activity when refresh interval is null', function () {
+    Auth::guard('footprint')->login($this->user);
+
+    $session = $this->user->currentSession();
+    $originalTime = $session->last_used_at->copy();
+
+    Carbon::setTestNow(now()->addSecond());
+
+    config()->set('footprint.refresh_interval', null);
+
+    $request = Request::create('/test');
+    $request->setLaravelSession($this->app['session.store']);
+    $request->setUserResolver(fn () => $this->user);
+
+    $middleware = $this->app->make(TrackSession::class);
+    $middleware->handle($request, fn ($req) => response('ok'));
+
+    $session->refresh();
+    expect($session->last_used_at->gt($originalTime))->toBeTrue();
+});
+
 it('updates activity after refresh interval has passed', function () {
     Carbon::setTestNow(now()->subMinutes(10));
     Auth::guard('footprint')->login($this->user);

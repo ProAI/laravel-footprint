@@ -42,9 +42,9 @@ class UserSessionRepository implements UserSessionRepositoryContract
     /**
      * The number of minutes that the session should be updated.
      *
-     * @var int
+     * @var int|null
      */
-    protected int $refreshInterval;
+    protected ?int $refreshInterval;
 
     /**
      * Create a new database user session provider.
@@ -53,9 +53,9 @@ class UserSessionRepository implements UserSessionRepositoryContract
      * @param  class-string<\ProAI\Footprint\Contracts\Sessionable&\Illuminate\Database\Eloquent\Model>  $model
      * @param  int  $lifetime
      * @param  int  $rememberDuration
-     * @param  int  $refreshInterval
+     * @param  int|null  $refreshInterval
      */
-    public function __construct(Container $container, string $model, int $lifetime, int $rememberDuration, int $refreshInterval)
+    public function __construct(Container $container, string $model, int $lifetime, int $rememberDuration, ?int $refreshInterval)
     {
         $this->container = $container;
         $this->model = $model;
@@ -240,7 +240,7 @@ class UserSessionRepository implements UserSessionRepositoryContract
             $q->orWhere('remember_issued_at', '<=', $time->copy()->subMinutes($this->rememberDuration));
         });
 
-        $timeout = $this->lifetime + $this->refreshInterval;
+        $timeout = $this->lifetime + ($this->refreshInterval ?? 0);
 
         // Expired session
         $query->where('last_used_at', '<=', $time->copy()->subMinutes($timeout));

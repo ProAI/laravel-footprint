@@ -78,7 +78,7 @@ class FootprintServiceProvider extends ServiceProvider
             /** @var int $rememberDuration */
             $rememberDuration = $app['config']->get('footprint.remember_duration', 43200);
 
-            /** @var int $refreshInterval */
+            /** @var int|null $refreshInterval */
             $refreshInterval = $app['config']->get('footprint.refresh_interval', 5);
 
             return new UserSessionRepository(
