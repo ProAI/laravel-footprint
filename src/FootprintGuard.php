@@ -308,6 +308,11 @@ class FootprintGuard extends SessionGuard
 
         $this->repository->delete($session);
 
+        if ($user->currentSession()?->isRemembered()) {
+            $token = $this->createRememberToken();
+            $this->rotateRememberToken($user, $token);
+        }
+
         $this->fireOtherDeviceLogoutEvent($user);
     }
 
