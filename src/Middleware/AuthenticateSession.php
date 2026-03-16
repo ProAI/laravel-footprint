@@ -18,7 +18,11 @@ class AuthenticateSession extends Middleware
     public function handle($request, Closure $next): mixed // @pest-ignore-type
     {
         if (! $request->hasSession() || ! $request->user()) {
-            return $next($request);
+            return tap($next($request), function () use ($request) {
+                if (! is_null($this->guard()->user())) {
+                    $this->storeFingerprintInSession($request);
+                }
+            });
         }
 
         if (! $this->verifyAuthentication($request)) {
