@@ -308,6 +308,7 @@ class FootprintGuard extends SessionGuard
 
         $this->repository->delete($session);
 
+        /** @var \Illuminate\Contracts\Auth\Authenticatable&\ProAI\Footprint\Contracts\HasSessions $user */
         if ($user->currentSession()?->isRemembered()) {
             $token = $this->createRememberToken();
             $this->rotateRememberToken($user, $token);
