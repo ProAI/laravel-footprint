@@ -99,8 +99,10 @@ class FootprintServiceProvider extends ServiceProvider
     protected function configureGuard(): void
     {
         Auth::resolved(function (Factory $auth) {
-            $auth->extend('footprint', function (Application $app, string $name, array $config) {
-                return $this->createGuard($app, $name, $config);
+            $requestGuardCreator = fn (string $name, array $config) => $this->createGuard($name, $config);
+
+            $auth->extend('footprint', function (Application $app, string $name, array $config) use ($requestGuardCreator) {
+                return $requestGuardCreator($name, $config);
             });
         });
     }
@@ -108,27 +110,29 @@ class FootprintServiceProvider extends ServiceProvider
     /**
      * Register the guard.
      *
-     * @param  \Illuminate\Foundation\Application  $app
      * @param  string  $name
      * @param  array<string, mixed>  $config
      * @return \ProAI\Footprint\FootprintGuard
      */
-    protected function createGuard(Application $app, string $name, array $config): FootprintGuard
+    protected function createGuard(string $name, array $config): FootprintGuard
     {
+        /** @var \Illuminate\Contracts\Config\Repository $appConfig */
+        $appConfig = $this->app->make('config');
+
         /** @var bool $rehashOnLogin */
-        $rehashOnLogin = $app['config']->get('hashing.rehash_on_login', true);
+        $rehashOnLogin = $appConfig->get('hashing.rehash_on_login', true);
 
         /** @var bool $rotateOnLogin */
-        $rotateOnLogin = $app['config']->get('footprint.rotate_on_login', true);
+        $rotateOnLogin = $appConfig->get('footprint.rotate_on_login', true);
 
         /** @var bool $logoutAllDevices */
-        $logoutAllDevices = $app['config']->get('footprint.logout_all_devices', true);
+        $logoutAllDevices = $appConfig->get('footprint.logout_all_devices', true);
 
         /** @var int $timeboxDuration */
-        $timeboxDuration = $app['config']->get('auth.timebox_duration', 200000);
+        $timeboxDuration = $appConfig->get('auth.timebox_duration', 200000);
 
         /** @var int $rememberDuration */
-        $rememberDuration = $app['config']->get('footprint.remember_duration', 43200);
+        $rememberDuration = $appConfig->get('footprint.remember_duration', 43200);
 
         /** @var \Illuminate\Contracts\Auth\UserProvider $provider */
         $provider = Auth::createUserProvider($config['provider'] ?? null);
@@ -136,19 +140,19 @@ class FootprintServiceProvider extends ServiceProvider
         $guard = new FootprintGuard(
             $name,
             $provider,
-            $app->make(UserSessionRepositoryContract::class),
-            $app['session.store'],
+            $this->app->make(UserSessionRepositoryContract::class),
+            $this->app->make('session.store'),
             rehashOnLogin: $rehashOnLogin,
             rotateOnLogin: $rotateOnLogin,
             logoutAllDevices: $logoutAllDevices,
             timeboxDuration: $timeboxDuration,
         );
 
-        $guard->setCookieJar($app['cookie']);
+        $guard->setCookieJar($this->app->make('cookie'));
 
-        $guard->setDispatcher($app['events']);
+        $guard->setDispatcher($this->app->make('events'));
 
-        $guard->setRequest($app->refresh('request', $guard, 'setRequest'));
+        $guard->setRequest($this->app->refresh('request', $guard, 'setRequest'));
 
         $guard->setRememberDuration($rememberDuration);
 
