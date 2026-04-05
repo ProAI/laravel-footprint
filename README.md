@@ -156,14 +156,14 @@ $schedule->command('footprint:prune-expired')->daily();
 
 The published config file (`config/footprint.php`) provides the following options:
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `session_model` | `UserSession::class` | Eloquent model used for session records |
-| `remember_duration` | `43200` (30 days) | How long a remember me token stays valid (in minutes) |
-| `rotate_on_login` | `true` | Regenerate remember token each time it is used |
-| `logout_all_devices` | `true` | Whether `logout()` logs out all devices or only the current one |
-| `refresh_interval` | `5` | Minutes between session activity updates |
-| `expired_session_retention` | `1440` (24 hours) | How long expired sessions are kept before pruning |
+| Option                      | Default              | Description                                                     |
+| --------------------------- | -------------------- | --------------------------------------------------------------- |
+| `session_model`             | `UserSession::class` | Eloquent model used for session records                         |
+| `remember_duration`         | `43200` (30 days)    | How long a remember me token stays valid (in minutes)           |
+| `rotate_on_login`           | `true`               | Regenerate remember token each time it is used                  |
+| `logout_all_devices`        | `true`               | Whether `logout()` logs out all devices or only the current one |
+| `refresh_interval`          | `5`                  | Minutes between session activity updates                        |
+| `expired_session_retention` | `1440` (24 hours)    | How long expired sessions are kept before pruning               |
 
 ## Custom Session Model
 
@@ -195,12 +195,6 @@ Then update the config:
 
 ```php
 'session_model' => CustomSession::class,
-```
-
-## Testing
-
-```bash
-composer test
 ```
 
 ## License
